@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getAuthInfoFromCookie } from '@/lib/auth';
 import { getConfig } from '@/lib/config';
+import { normalizeDanmakuApiBaseUrl } from '@/lib/danmaku/config';
 import { db } from '@/lib/db';
 import { normalizeApiBaseUrl } from '@/lib/url';
 
@@ -292,7 +293,7 @@ export async function POST(request: NextRequest) {
       DisableYellowFilter,
       FluidSearch,
       DanmakuSourceType,
-      DanmakuApiBase: normalizeApiBaseUrl(DanmakuApiBase),
+      DanmakuApiBase: normalizeDanmakuApiBaseUrl(DanmakuApiBase),
       DanmakuApiToken,
       DanmakuAutoLoadDefault,
       TMDBApiKey,

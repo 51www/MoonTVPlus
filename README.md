@@ -531,7 +531,7 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 | TMDB_API_KEY                             | TMDB API 密钥                                                | 任意字符串                  | (空)                                                         |
 | TMDB_PROXY                               | TMDB 代理地址                                                | URL                         | (空)                                                         |
 | TMDB_REVERSE_PROXY                       | TMDB 反向代理地址                                            | URL                         | (空)                                                         |
-| DANMAKU_API_BASE                         | 弹幕 API 地址                                                | URL                         | http://localhost:9321                                        |
+| DANMAKU_API_BASE                         | 弹幕 API 地址（可携带验证参数）                              | URL                         | http://localhost:9321                                        |
 | DANMAKU_API_TOKEN                        | 弹幕 API Token                                               | 任意字符串                  | 87654321                                                     |
 | DATA_MIGRATION_CHUNK_SIZE                | 数据迁移批处理大小（控制导入导出时每批处理的用户数量和数据条数） | 正整数                      | 10                                                           |
 | QR_LOGIN_STORE_MODE                      | 电视端扫码登录状态存储模式；serverless环境下多节点内存状态不可靠。 | auto、memory、hybrid、shared | auto                                                         |
@@ -547,6 +547,7 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 | TELEGRAM_NOTIFICATIONS_ENABLED           | 是否启用 Telegram 通知推送                                    | true/false                  | true                                                         |
 | TELEGRAM_DEFAULT_NOTIFICATIONS           | 新绑定 Telegram 用户是否默认开启通知                          | true/false                  | true                                                         |
 
+弹幕 API 地址支持带查询参数的云应用分享地址，例如 `https://xxx?sharecode=yyy`。地址中的 `sharecode` 等验证参数会自动附加到搜索、匹配、剧集和弹幕的每一个请求末尾，后台「站点配置 → 弹幕 API 地址」同样适用。
 
 ### Telegram Bot 配置
 

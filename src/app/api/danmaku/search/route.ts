@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getConfig } from '@/lib/config';
-import { getDanmakuApiBaseUrl } from '@/lib/danmaku/config';
+import { buildDanmakuApiUrl } from '@/lib/danmaku/config';
 
 export const runtime = 'nodejs';
 
@@ -25,9 +25,10 @@ export async function GET(request: NextRequest) {
 
     // 从数据库读取弹幕配置
     const config = await getConfig();
-    const baseUrl = getDanmakuApiBaseUrl(config.SiteConfig);
-
-    const apiUrl = `${baseUrl}/api/v2/search/anime?keyword=${encodeURIComponent(keyword)}`;
+    const apiUrl = buildDanmakuApiUrl(
+      config.SiteConfig,
+      `/api/v2/search/anime?keyword=${encodeURIComponent(keyword)}`
+    );
 
     // 添加超时控制
     const controller = new AbortController();

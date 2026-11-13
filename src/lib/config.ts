@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, no-console, @typescript-eslint/no-non-null-assertion */
 
+import { normalizeDanmakuApiBaseUrl } from '@/lib/danmaku/config';
 import { db } from '@/lib/db';
 import { normalizeApiBaseUrl } from '@/lib/url';
 
@@ -1144,7 +1145,7 @@ export function configSelfCheck(adminConfig: AdminConfig): AdminConfig {
   if (site) {
     site.DoubanProxy = normalizeApiBaseUrl(site.DoubanProxy);
     site.DoubanImageProxy = normalizeApiBaseUrl(site.DoubanImageProxy);
-    site.DanmakuApiBase = normalizeApiBaseUrl(site.DanmakuApiBase);
+    site.DanmakuApiBase = normalizeDanmakuApiBaseUrl(site.DanmakuApiBase);
     site.TMDBProxy = normalizeApiBaseUrl(site.TMDBProxy);
     site.TMDBReverseProxy = normalizeApiBaseUrl(site.TMDBReverseProxy);
     site.TMDBImageBaseUrl = normalizeApiBaseUrl(

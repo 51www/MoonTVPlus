@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getConfig } from '@/lib/config';
-import { getDanmakuApiBaseUrl } from '@/lib/danmaku/config';
+import { buildDanmakuApiUrl } from '@/lib/danmaku/config';
 
 export const runtime = 'nodejs';
 
@@ -51,16 +51,21 @@ export async function GET(request: NextRequest) {
 
     // 从数据库读取弹幕配置
     const config = await getConfig();
-    const baseUrl = getDanmakuApiBaseUrl(config.SiteConfig);
 
     let apiUrl: string;
 
     if (episodeId) {
       // 通过剧集 ID 获取弹幕 - 使用 XML 格式
-      apiUrl = `${baseUrl}/api/v2/comment/${episodeId}?format=xml`;
+      apiUrl = buildDanmakuApiUrl(
+        config.SiteConfig,
+        `/api/v2/comment/${episodeId}?format=xml`
+      );
     } else {
       // 通过视频 URL 获取弹幕 - 使用 XML 格式
-      apiUrl = `${baseUrl}/api/v2/comment?url=${encodeURIComponent(url!)}&format=xml`;
+      apiUrl = buildDanmakuApiUrl(
+        config.SiteConfig,
+        `/api/v2/comment?url=${encodeURIComponent(url!)}&format=xml`
+      );
     }
 
     // 添加超时控制
