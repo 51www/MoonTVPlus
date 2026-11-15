@@ -11,6 +11,36 @@ import { normalizeApiBaseUrl } from '@/lib/url';
 let cachedToken: string | null = null;
 let tokenExpiry: number | null = null;
 
+/**
+ * 拆分 API Base URL，将查询参数（如 workbuddy 的 ?sharecode=xxx）与路径分离。
+ * 这样无论后台配置的是 https://host 还是 https://host/?sharecode=xxx，
+ * 都能正确地把查询参数附加到每个 API 请求上，而不是被误拼接到路径里。
+ */
+function splitBaseUrl(apiUrl: string): { base: string; query: string } {
+  const trimmed = String(apiUrl || '').trim();
+  const qIndex = trimmed.indexOf('?');
+  if (qIndex === -1) {
+    return { base: normalizeApiBaseUrl(trimmed), query: '' };
+  }
+  const base = normalizeApiBaseUrl(trimmed.slice(0, qIndex));
+  const query = trimmed.slice(qIndex + 1).replace(/^\/+/, '');
+  return { base, query };
+}
+
+/**
+ * 基于拆分后的 base 构建完整请求地址，自动把原始查询参数附加到 API 路径之后。
+ */
+function buildPansouUrl(
+  base: string,
+  query: string,
+  path: string
+): string {
+  const url = `${base}${path}`;
+  if (!query) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}${query}`;
+}
+
 export interface PansouLink {
   url: string;
   password: string;
@@ -42,8 +72,10 @@ export async function loginPansou(
   password: string
 ): Promise<string> {
   try {
-    const baseUrl = normalizeApiBaseUrl(apiUrl);
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
+    const { base: baseUrl, query: baseQuery } = splitBaseUrl(apiUrl);
+    const response = await fetch(
+      buildPansouUrl(baseUrl, baseQuery, '/api/auth/login'),
+      {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -114,7 +146,7 @@ export async function searchPansou(
   }
 ): Promise<PansouSearchResult> {
   try {
-    const baseUrl = normalizeApiBaseUrl(apiUrl);
+    const { base: baseUrl, query: baseQuery } = splitBaseUrl(apiUrl);
     // 获取 Token（如果需要认证）
     const token = await getValidToken(
       baseUrl,
@@ -145,7 +177,9 @@ export async function searchPansou(
       body.cloud_types = options.cloudTypes;
     }
 
-    const response = await fetch(`${baseUrl}/api/search`, {
+    const response = await fetch(
+      buildPansouUrl(baseUrl, baseQuery, '/api/search'),
+      {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
@@ -205,8 +239,10 @@ export function clearPansouToken(): void {
  */
 export async function checkPansouHealth(apiUrl: string): Promise<boolean> {
   try {
-    const baseUrl = normalizeApiBaseUrl(apiUrl);
-    const response = await fetch(`${baseUrl}/api/health`, {
+    const { base: baseUrl, query: baseQuery } = splitBaseUrl(apiUrl);
+    const response = await fetch(
+      buildPansouUrl(baseUrl, baseQuery, '/api/health'),
+      {
       method: 'GET',
     });
 
