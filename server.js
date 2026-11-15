@@ -1,3 +1,7 @@
+// 启动时最先载入部署配置（deploy.config.json），注入 process.env。
+// 发布包不含 .env 且发布工具不注入环境变量时，账号密码由此文件提供。
+require('./deploy-config').loadDeployConfig();
+
 // Next.js 自定义服务器 + Socket.IO
 const { createServer } = require('http');
 const { parse } = require('url');

@@ -1,0 +1,6 @@
+{
+  "USERNAME": "admin",
+  "PASSWORD": "change_me_strong_password",
+  "NEXT_PUBLIC_STORAGE_TYPE": "d1",
+  "SQLITE_DB_PATH":".data/moontv.db"
+}

@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// 构建期最先载入部署配置（deploy.config.json），注入 process.env，
+// 保证 next build 阶段（含 middleware / 服务端 bundle）也能从固定配置取值。
+require('./deploy-config').loadDeployConfig();
+
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 const fs = require('fs');
 const path = require('path');
@@ -39,14 +43,9 @@ const createNextConfig = (phase) => {
   // @libsql/* 等包有 workerd 专用入口（如 web.cjs），Next NFT 默认只追踪 node 入口，
   // 导致 .open-next 里缺少 web.cjs 并报 Could not resolve "@libsql/isomorphic-ws"。
   // 声明为 server external 后，OpenNext 会完整拷贝这些包并应用 workerd 导出。
+  // Next 14 使用 experimental.serverComponentsExternalPackages（下方已配置）；
+  // 顶层 serverExternalPackages 是 Next 15 写法，在 14.2 下会报 “Unrecognized key” 警告，故移除。
   // 参见: https://opennext.js.org/cloudflare/howtos/workerd
-  serverExternalPackages: [
-    '@libsql/client',
-    '@libsql/hrana-client',
-    '@libsql/isomorphic-ws',
-    '@libsql/isomorphic-fetch',
-    'libsql',
-  ],
 
   experimental: {
     instrumentationHook: process.env.NODE_ENV === 'production' && !isEdgeBuild,
